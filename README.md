@@ -1,124 +1,178 @@
-# Fraud-Detection-on-Imbalanced-Financial-Transactions
-# 💳 Fraud Detection System using Machine Learning
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraud Detection Project</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 20px;
+            color: #333;
+        }
+        h1, h2, h3, h4 {
+            color: #1a73e8;
+        }
+        h1 { font-size: 2em; margin-bottom: 10px; }
+        h2 { font-size: 1.6em; margin-top: 30px; margin-bottom: 10px; }
+        h3 { font-size: 1.3em; margin-top: 20px; margin-bottom: 10px; }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #aaa;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 15px 0;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            overflow-x: auto;
+            border-radius: 5px;
+        }
+        .highlight {
+            color: #d93025;
+            font-weight: bold;
+        }
+        blockquote {
+            border-left: 4px solid #1a73e8;
+            margin: 10px 0;
+            padding-left: 10px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
 
-## 📌 Project Overview
-This project detects **fraudulent financial transactions** using Machine Learning.  
-The goal is to identify suspicious transactions based on features like amount, account balances, and transaction type.  
+<h1>💳 Fraud Detection System using Machine Learning</h1>
 
-> ⚠️ Due to the severe class imbalance, **SMOTE** was applied to improve fraud detection performance.
+<h2>📌 Project Overview</h2>
+<p>This project detects <span class="highlight">fraudulent financial transactions</span> using Machine Learning.
+The goal is to identify suspicious transactions based on features like amount, account balances, and transaction type.</p>
+<blockquote>Due to the severe class imbalance, <strong>SMOTE</strong> was applied to improve fraud detection performance.</blockquote>
 
----
+<h2>📂 Dataset Description</h2>
+<p>The dataset contains <strong>53,516 transactions</strong> after cleaning.</p>
 
-## 📂 Dataset Description
-The dataset contains **53,516 transactions** after cleaning.
+<table>
+    <tr>
+        <th>Feature</th>
+        <th>Description</th>
+    </tr>
+    <tr><td>step</td><td>Time step of the transaction</td></tr>
+    <tr><td>type</td><td>Transaction type (TRANSFER, PAYMENT, CASH_OUT, etc.)</td></tr>
+    <tr><td>amount</td><td>Transaction amount</td></tr>
+    <tr><td>nameOrig</td><td>Sender account ID</td></tr>
+    <tr><td>oldbalanceOrg</td><td>Sender balance before transaction</td></tr>
+    <tr><td>newbalanceOrig</td><td>Sender balance after transaction</td></tr>
+    <tr><td>nameDest</td><td>Receiver account ID</td></tr>
+    <tr><td>oldbalanceDest</td><td>Receiver balance before transaction</td></tr>
+    <tr><td>newbalanceDest</td><td>Receiver balance after transaction</td></tr>
+    <tr><td>isFraud</td><td>Target variable (1 = Fraud, 0 = Normal)</td></tr>
+    <tr><td>isFlaggedFraud</td><td>Flagged fraud indicator</td></tr>
+</table>
 
-| Feature | Description |
-|---------|-------------|
-| `step` | Time step of the transaction |
-| `type` | Transaction type (`TRANSFER`, `PAYMENT`, `CASH_OUT`, etc.) |
-| `amount` | Transaction amount |
-| `nameOrig` | Sender account ID |
-| `oldbalanceOrg` | Sender balance before transaction |
-| `newbalanceOrig` | Sender balance after transaction |
-| `nameDest` | Receiver account ID |
-| `oldbalanceDest` | Receiver balance before transaction |
-| `newbalanceDest` | Receiver balance after transaction |
-| `isFraud` | Target variable (1 = Fraud, 0 = Normal) |
-| `isFlaggedFraud` | Flagged fraud indicator |
+<p><strong>Fraud distribution:</strong></p>
+<ul>
+    <li>Normal transactions: 53,416 (≈ 99.81%)</li>
+    <li>Fraud transactions: 100 (≈ 0.19%)</li>
+</ul>
 
-**Fraud distribution**:
+<h2>⚙️ Data Preprocessing</h2>
+<ol>
+    <li>Removed missing values and duplicates</li>
+    <li>Converted categorical feature <code>type</code> using One-Hot Encoding</li>
+    <li>Dropped non-informative features: <code>step</code>, <code>nameOrig</code>, <code>nameDest</code>, <code>isFlaggedFraud</code></li>
+    <li>Converted <code>amount</code> to numeric</li>
+    <li>Split dataset into training (70%) and testing (30%)</li>
+    <li>Balanced the training data using <strong>SMOTE</strong></li>
+    <li>Standardized features for SVM using <strong>StandardScaler</strong></li>
+</ol>
 
-- Normal transactions: 53,416 (≈ 99.81%)  
-- Fraud transactions: 100 (≈ 0.19%)
+<h2>📊 Exploratory Data Analysis (EDA)</h2>
+<h3>1️⃣ Correlation Matrix</h3>
+<img src="plots/correlation_matrix.png" alt="Correlation Matrix">
 
----
+<h3>2️⃣ Fraud vs Normal Distribution</h3>
+<img src="plots/fraud_distribution.png" alt="Fraud vs Normal Distribution">
 
-## ⚙️ Data Preprocessing
+<h3>3️⃣ Transaction Amount Boxplot</h3>
+<img src="plots/amount_boxplot.png" alt="Transaction Amount Boxplot">
 
-Steps applied:
+<h3>4️⃣ Confusion Matrices</h3>
+<img src="plots/confusion_matrix.png" alt="Confusion Matrices">
 
-1. Removed **missing values** and **duplicates**  
-2. Converted categorical feature `type` using **One-Hot Encoding**  
-3. Dropped non-informative features: `step`, `nameOrig`, `nameDest`, `isFlaggedFraud`  
-4. Converted `amount` to numeric  
-5. Split dataset into **training (70%)** and **testing (30%)**  
-6. Balanced the training data using **SMOTE**  
-7. Standardized features for **SVM** using **StandardScaler**
+<h2>🤖 Machine Learning Models</h2>
+<h3>1️⃣ Logistic Regression</h3>
+<p>Linear model, used <code>class_weight='balanced'</code>.  
+High recall for fraud but low precision.</p>
 
----
+<h3>2️⃣ Random Forest</h3>
+<p>Ensemble model, handles nonlinear patterns. Best performance among tested models.</p>
+<table>
+    <tr><th>Metric</th><th>Fraud</th></tr>
+    <tr><td>Precision</td><td>0.42</td></tr>
+    <tr><td>Recall</td><td>0.67</td></tr>
+    <tr><td>F1-score</td><td>0.51</td></tr>
+</table>
 
-## 📊 Exploratory Data Analysis (EDA)
+<h3>3️⃣ SVM</h3>
+<p>RBF kernel with scaled features. High recall but low precision, similar to Logistic Regression.</p>
 
-### 1️⃣ Correlation Matrix
-![Correlation Matrix](plots/correlation_matrix.png)
-
-### 2️⃣ Fraud vs Normal Distribution
-![Fraud Distribution](plots/fraud_distribution.png)
-
-### 3️⃣ Transaction Amount Boxplot
-![Transaction Amount Boxplot](plots/amount_boxplot.png)
-
-### 4️⃣ Confusion Matrices
-![Confusion Matrices](plots/confusion_matrix.png)
-
----
-
-## 🤖 Machine Learning Models
-
-### 1️⃣ Logistic Regression
-- Linear model, used `class_weight='balanced'`  
-- High recall for fraud but low precision
-
-### 2️⃣ Random Forest
-- Ensemble model, handles nonlinear patterns  
-- Best performance among tested models
-
-| Metric | Fraud |
-|--------|-------|
-| Precision | 0.42 |
-| Recall | 0.67 |
-| F1-score | 0.51 |
-
-### 3️⃣ SVM
-- Used RBF kernel and scaled features  
-- Similar recall to Logistic Regression, low precision
-
----
-
-## 🔧 Hyperparameter Tuning (Random Forest)
-
-GridSearchCV parameters:
-
-```python
-param_grid = {
+<h2>🔧 Hyperparameter Tuning (Random Forest)</h2>
+<pre><code>param_grid = {
     'n_estimators': [100, 200, 300],
     'max_depth': [10, 20, None],
     'min_samples_split': [2, 5, 10]
-}
+}</code></pre>
 
-Best parameters:
+<p><strong>Best parameters:</strong></p>
+<pre><code>{'n_estimators': 100, 'max_depth': None, 'min_samples_split': 2}</code></pre>
 
-{'n_estimators': 100, 'max_depth': None, 'min_samples_split': 2}
+<h2>💾 Model Saving</h2>
+<pre><code>joblib.dump(best_rf, 'fraud_rf_model.pkl')
+joblib.dump(scaler, 'scaler.pkl')</code></pre>
 
-💾 Model Saving
-joblib.dump(best_rf, 'fraud_rf_model.pkl')
-joblib.dump(scaler, 'scaler.pkl')
+<h2>🔮 Example Predictions</h2>
+<table>
+<tr><th>Transaction</th><th>Amount</th><th>Sender Balance</th><th>Receiver Balance</th><th>Result</th></tr>
+<tr><td>Transaction 1</td><td>5,000</td><td>20,000 → 15,000</td><td>1,000 → 6,000</td><td>Normal ✅</td></tr>
+<tr><td>Transaction 2</td><td>181</td><td>181 → 0</td><td>0 → 0</td><td>Fraud ⚠️</td></tr>
+</table>
 
-🔮 Example Predictions
-Transaction	Amount	Sender Balance	Receiver Balance	Result
-Transaction 1	5,000	20,000 → 15,000	1,000 → 6,000	Normal ✅
-Transaction 2	181	181 → 0	0 → 0	Fraud ⚠️
+<h2>🛠 Technologies Used</h2>
+<ul>
+    <li>Python</li>
+    <li>Pandas, NumPy</li>
+    <li>Scikit-learn</li>
+    <li>Imbalanced-learn (SMOTE)</li>
+    <li>Matplotlib, Seaborn</li>
+    <li>Joblib</li>
+</ul>
 
-🛠 Technologies Used
-Python
-Pandas, NumPy
-Scikit-learn
-Imbalanced-learn (SMOTE)
-Matplotlib, Seaborn
-Joblib
-
-📁 Project Structure
-fraud-detection-project/
+<h2>📁 Project Structure</h2>
+<pre><code>fraud-detection-project/
 │
 ├── samples.csv
 ├── fraud_detection.ipynb
@@ -131,18 +185,19 @@ fraud-detection-project/
 │   ├── amount_boxplot.png
 │   └── confusion_matrix.png
 │
-└── README.md
-🚀 Future Improvements
+└── README.md</code></pre>
 
-Train on larger datasets
+<h2>🚀 Future Improvements</h2>
+<ul>
+    <li>Train on larger datasets</li>
+    <li>Try XGBoost / LightGBM</li>
+    <li>Deploy as real-time API (Flask / FastAPI)</li>
+    <li>Experiment with Deep Learning for better detection</li>
+</ul>
 
-Try XGBoost / LightGBM
+<h2>👩‍💻 Author</h2>
+<p><strong>Waad Sadek</strong><br>
+Machine Learning enthusiast building intelligent systems for fraud detection and predictive analytics.</p>
 
-Deploy as real-time API (Flask / FastAPI)
-
-Experiment with Deep Learning for better detection
-
-👩‍💻 Author
-
-Waad Sadek
-Machine Learning enthusiast building intelligent systems for fraud detection and predictive analytics.
+</body>
+</html>
