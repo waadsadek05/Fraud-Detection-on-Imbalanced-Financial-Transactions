@@ -2,17 +2,16 @@
 💳 Fraud Detection System using Machine Learning
 📌 Project Overview
 
-This project focuses on detecting fraudulent financial transactions using Machine Learning techniques. The goal is to build a reliable classification model capable of identifying suspicious transactions based on transaction attributes such as amount, account balances, and transaction type.
-
-The dataset contains transaction records where each transaction is labeled as fraudulent or normal. Due to the severe class imbalance in the dataset, special techniques such as SMOTE were applied to improve the model's ability to detect fraud.
+This project detects fraudulent financial transactions using Machine Learning. The goal is to identify suspicious transactions based on attributes like amount, account balances, and transaction type.
+Due to a high class imbalance, SMOTE was used to improve fraud detection performance.
 
 📂 Dataset Description
 
-The dataset includes the following features:
+The dataset contains 53,516 transactions after cleaning. Features include:
 
 Feature	Description
 step	Time step of the transaction
-type	Type of transaction (TRANSFER, PAYMENT, CASH_OUT, etc.)
+type	Transaction type (TRANSFER, PAYMENT, CASH_OUT, etc.)
 amount	Transaction amount
 nameOrig	Sender account ID
 oldbalanceOrg	Sender balance before transaction
@@ -22,154 +21,129 @@ oldbalanceDest	Receiver balance before transaction
 newbalanceDest	Receiver balance after transaction
 isFraud	Target variable (1 = Fraud, 0 = Normal)
 isFlaggedFraud	Flagged fraud indicator
+
+Fraud distribution:
+
+Normal transactions: 53,416 (≈ 99.81%)
+
+Fraud transactions: 100 (≈ 0.19%)
+
 ⚙️ Data Preprocessing
 
-The following preprocessing steps were performed:
+Steps applied:
 
-Removed missing values
+Removed missing values and duplicates
 
-Removed duplicate records
+Converted categorical feature type using One-Hot Encoding
 
-Converted categorical variable transaction type using One-Hot Encoding
+Dropped non-informative features: step, nameOrig, nameDest, isFlaggedFraud
 
-Removed non-informative features:
+Converted amount to numeric
 
-nameOrig
+Split dataset into training (70%) and testing (30%)
 
-nameDest
-
-step
-
-isFlaggedFraud
-
-Converted amount to numeric format
-
-Split dataset into training and testing sets
-
-Applied SMOTE (Synthetic Minority Oversampling Technique) to balance the dataset
+Balanced the training data using SMOTE
 
 Standardized features for SVM using StandardScaler
 
 📊 Exploratory Data Analysis (EDA)
-
-Several visualizations were created to better understand the dataset:
-
 1️⃣ Correlation Matrix
 
-Shows relationships between features and the fraud label.
+Displays feature correlations with the target.
+
+Helps identify important features for fraud detection.
 
 2️⃣ Fraud vs Normal Distribution
 
-Illustrates the severe class imbalance in the dataset.
+Shows extreme class imbalance.
+
+Only 0.19% of transactions are fraudulent.
 
 3️⃣ Transaction Amount Boxplot
 
-Compares transaction amounts between fraud and normal transactions using a log scale.
+Compares amount for Normal vs Fraud transactions using log scale.
+
+Fraud transactions usually have small or unusual amounts.
 
 4️⃣ Transaction Amount Histogram
 
-Displays distribution differences between fraudulent and normal transactions.
+Log-scaled histogram of transaction amounts for both classes.
+
+Highlights differences between fraud and normal patterns.
 
 🤖 Machine Learning Models
-
-Three models were trained and evaluated:
-
 1️⃣ Logistic Regression
 
-Handles linear relationships
+Handles linear patterns.
 
-Used class_weight="balanced"
+Used class_weight='balanced' to handle class imbalance.
+
+Results: High recall for fraud, low precision (many false positives).
 
 2️⃣ Random Forest
 
-Ensemble learning model
+Ensemble tree-based model, handles nonlinear patterns.
 
-Handles nonlinear patterns well
+Best performance for fraud detection among tested models.
 
-Performed best among tested models
+Results:
 
-3️⃣ Support Vector Machine (SVM)
-
-Used RBF Kernel
-
-Applied feature scaling before training
-
-🔍 Model Evaluation
-
-Models were evaluated using:
-
-Confusion Matrix
-
-Precision
-
-Recall
-
-F1-score
-
-Because fraud detection is a highly imbalanced classification problem, the focus was on Recall and F1-score for the fraud class.
-
-Example Random Forest Results
-Metric	Value
-Precision (Fraud)	0.42
-Recall (Fraud)	0.67
+Metric	Fraud
+Precision	0.42
+Recall	0.67
 F1-score	0.51
+3️⃣ SVM
 
-Random Forest provided the best balance between detecting fraud and minimizing false positives.
+Used RBF kernel, scaled features.
 
-🔧 Hyperparameter Tuning
+High recall for fraud but low precision, similar to logistic regression.
 
-GridSearchCV was used to optimize Random Forest parameters.
+🔧 Hyperparameter Tuning (Random Forest)
+
+Used GridSearchCV:
+
+param_grid = {
+    'n_estimators': [100, 200, 300],
+    'max_depth': [10, 20, None],
+    'min_samples_split': [2, 5, 10]
+}
 
 Best parameters:
 
-n_estimators = 100
-max_depth = None
-min_samples_split = 2
+{'n_estimators': 100, 'max_depth': None, 'min_samples_split': 2}
 💾 Model Saving
-
-The trained model was saved using Joblib for later deployment.
-
 joblib.dump(best_rf, 'fraud_rf_model.pkl')
 joblib.dump(scaler, 'scaler.pkl')
-🔮 Example Prediction
 
-Example transactions were tested with the saved model.
+The saved model can predict new transactions without retraining.
 
-Transaction	Result
-Transaction 1	Normal
-Transaction 2	Fraud
-
-Example Output:
-
-Transaction 1 → Normal
-Transaction 2 → Fraud
+🔮 Example Predictions
+Transaction	Amount	Sender Balance	Receiver Balance	Result
+Transaction 1	5,000	20,000 → 15,000	1,000 → 6,000	Normal ✅
+Transaction 2	181	181 → 0	0 → 0	Fraud ⚠️
 🛠 Technologies Used
 
 Python
 
-Pandas
-
-NumPy
+Pandas, NumPy
 
 Scikit-learn
 
 Imbalanced-learn (SMOTE)
 
-Matplotlib
-
-Seaborn
+Matplotlib, Seaborn
 
 Joblib
 
 📁 Project Structure
-fraud-detection-project
+fraud-detection-project/
 │
 ├── samples.csv
-├── fraud_detection.ipynb / fraud_detection.py
+├── fraud_detection.ipynb
 ├── fraud_rf_model.pkl
 ├── scaler.pkl
 │
-├── plots
+├── plots/
 │   ├── correlation_matrix.png
 │   ├── fraud_distribution.png
 │   ├── amount_boxplot.png
@@ -178,18 +152,15 @@ fraud-detection-project
 └── README.md
 🚀 Future Improvements
 
-Use XGBoost or LightGBM
+Train with larger datasets
 
-Train on a larger dataset
+Test XGBoost / LightGBM
 
-Deploy the model using Flask or FastAPI
+Deploy as real-time API (Flask / FastAPI)
 
-Build a real-time fraud detection API
-
-Implement deep learning models
+Experiment with Deep Learning for better detection
 
 👩‍💻 Author
 
 Waad Sadek
-
-Machine Learning enthusiast focused on building intelligent systems for real-world problems such as fraud detection and predictive analytics.
+Machine Learning enthusiast, building intelligent systems for fraud detection and predictive analytics.
